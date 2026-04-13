@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistem Klinik</title>
+  <style>
+    body { font-family: Arial; margin: 0; background:#f4f4f4; }
+    .container { width: 400px; margin: 40px auto; background:#fff; padding:20px; border-radius:10px; }
+    input, select, button { width:100%; margin:8px 0; padding:10px; }
+    button { background:#007bff; color:#fff; border:none; cursor:pointer; }
+    .hidden { display:none; }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage" class="container">
+  <h2>Login</h2>
+  <input type="text" id="loginUser" placeholder="Username">
+  <input type="password" id="loginPass" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <p>Belum punya akun? <a href="#" onclick="showRegister()">Register</a></p>
+</div>
+
+<!-- REGISTER -->
+<div id="registerPage" class="container hidden">
+  <h2>Register</h2>
+  <input placeholder="Nama">
+  <input placeholder="NIK">
+  <input placeholder="Alamat">
+  <input placeholder="Tempat, Tanggal Lahir">
+  <input placeholder="Jenis Kelamin">
+  <input placeholder="Usia">
+  <input id="regUser" placeholder="Username">
+  <input id="regPass" type="password" placeholder="Password">
+  <button onclick="register()">Daftar</button>
+</div>
+
+<!-- MENU UTAMA -->
+<div id="mainPage" class="container hidden">
+  <h2>Menu Utama</h2>
+  <button onclick="showSection('profil')">Profil</button>
+  <button onclick="showSection('booking')">Booking Poli</button>
+  <button onclick="showSection('riwayat')">Riwayat</button>
+  <button onclick="showSection('emr')">EMR</button>
+
+  <!-- Profil -->
+  <div id="profil" class="hidden">
+    <h3>Profil</h3>
+    <p>Data pengguna ditampilkan di sini</p>
+  </div>
+
+  <!-- Booking -->
+  <div id="booking" class="hidden">
+    <h3>Booking Poli</h3>
+    <select id="poli">
+      <option>Poli Umum</option>
+      <option>Poli Gigi</option>
+      <option>Poli Anak</option>
+    </select>
+    <select id="dokter">
+      <option>Dr. A</option>
+      <option>Dr. B</option>
+    </select>
+    <input type="date" id="tanggal">
+    <input type="time" id="jam">
+    <button onclick="booking()">Konfirmasi</button>
+    <p id="antrian"></p>
+  </div>
+
+  <!-- Riwayat -->
+  <div id="riwayat" class="hidden">
+    <h3>Riwayat Appointment</h3>
+    <ul id="riwayatList"></ul>
+  </div>
+
+  <!-- EMR -->
+  <div id="emr" class="hidden">
+    <h3>EMR</h3>
+    <p>Diagnosa & Obat akan tampil di sini</p>
+  </div>
+</div>
+
+<script>
+  let users = [];
+  let riwayat = [];
+
+  function showRegister() {
+    document.getElementById('loginPage').classList.add('hidden');
+    document.getElementById('registerPage').classList.remove('hidden');
+  }
+
+  function register() {
+    let user = document.getElementById('regUser').value;
+    let pass = document.getElementById('regPass').value;
+    users.push({user, pass});
+    alert('Registrasi berhasil');
+    document.getElementById('registerPage').classList.add('hidden');
+    document.getElementById('loginPage').classList.remove('hidden');
+  }
+
+  function login() {
+    let user = document.getElementById('loginUser').value;
+    let pass = document.getElementById('loginPass').value;
+    let found = users.find(u => u.user === user && u.pass === pass);
+    if(found){
+      document.getElementById('loginPage').classList.add('hidden');
+      document.getElementById('mainPage').classList.remove('hidden');
+    } else {
+      alert('Login gagal');
+    }
+  }
+
+  function showSection(id) {
+    ['profil','booking','riwayat','emr'].forEach(s => {
+      document.getElementById(s).classList.add('hidden');
+    });
+    document.getElementById(id).classList.remove('hidden');
+  }
+
+  function booking() {
+    let poli = document.getElementById('poli').value;
+    let dokter = document.getElementById('dokter').value;
+    let tanggal = document.getElementById('tanggal').value;
+    let jam = document.getElementById('jam').value;
+
+    let nomor = Math.floor(Math.random()*100);
+    document.getElementById('antrian').innerText = "Nomor Antrian: " + nomor;
+
+    riwayat.push({poli, dokter, tanggal, jam, status:'Menunggu'});
+    renderRiwayat();
+  }
+
+  function renderRiwayat(){
+    let list = document.getElementById('riwayatList');
+    list.innerHTML = '';
+    riwayat.forEach(r => {
+      let li = document.createElement('li');
+      li.innerText = `${r.poli} - ${r.dokter} (${r.status})`;
+      list.appendChild(li);
+    });
+  }
+</script>
+
+</body>
+</html>
